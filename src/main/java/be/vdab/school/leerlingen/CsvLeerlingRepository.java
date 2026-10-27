@@ -2,6 +2,7 @@ package be.vdab.school.leerlingen;
 
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,9 +12,15 @@ import java.util.List;
 @Component
 @Qualifier("CSV")
 public class CsvLeerlingRepository implements LeerlingRepository {
+    private final Path pad;
+
+    public CsvLeerlingRepository(@Value("${leerlingen.csv}") String pad) {
+        this.pad = Path.of(pad);
+    }
+
     @Override
     public List<Leerling> findAll() {
-        try (var regels = Files.lines(Path.of("D:/opleding/Spring/SpringCoreMateriaal/leerlingen.csv"))) {
+        try (var regels = Files.lines(pad)) {
             return regels
                     .map(regel -> regel.split(","))
                     .map(regelOnderdelen -> new Leerling(

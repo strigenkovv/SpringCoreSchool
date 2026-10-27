@@ -1,6 +1,7 @@
 package be.vdab.school.leerlingen;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -11,9 +12,15 @@ import java.util.List;
 @Component
 @Qualifier("PROPERTIES")
 public class PropertiesLeerlingRepository implements LeerlingRepository {
+    private final Path pad;
+
+    public PropertiesLeerlingRepository(@Value("${leerlingen.properties}") String pad) {
+        this.pad = Path.of(pad);
+    }
+
     @Override
     public List<Leerling> findAll() {
-        try (var regels = Files.lines(Path.of("D:/opleding/Spring/SpringCoreMateriaal/leerlingen.properties"))) {
+        try (var regels = Files.lines(pad)) {
             return regels
                     .map(regel -> regel.split(":|,"))
                     .map(regelOnderdelen -> new Leerling(
